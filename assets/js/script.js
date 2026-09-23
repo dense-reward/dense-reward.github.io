@@ -1,7 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
    Academic Project Page — Scripts
-   (adapted from the tune-to-learn template; site-specific
-    poll / widget code removed)
    ═══════════════════════════════════════════════════════════════ */
 
 document.addEventListener('DOMContentLoaded', () => {
