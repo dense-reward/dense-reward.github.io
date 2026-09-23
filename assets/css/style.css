@@ -178,7 +178,7 @@ pre code { background: none; padding: 0; border: none; font-family: inherit; fon
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.3rem 1.5rem;
+  gap: 0.1rem 1.2rem;
   margin-bottom: 0.75rem;
   font-size: 1.05rem;
 }
@@ -1007,3 +1007,223 @@ body {
 .mb-2 { margin-bottom: 1rem; }
 .mb-4 { margin-bottom: 2rem; }
 .hidden { display: none !important; }
+
+/* ═══════════════════════════════════════════════════════════════
+   Page-specific layout & typography
+   (shared by the public and anonymous builds — keep both in sync)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Swap the body typeface from Inter to Google Sans Flex by redefining
+   the template's own variable — every rule using var(--font-sans)
+   picks it up, so style.css needs no edit. */
+:root {
+  --font-sans: "Google Sans Flex", ui-sans-serif, system-ui, -apple-system,
+               BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* Fixed TOC width so the back-to-top button can align to its left edge */
+  --toc-w: 16rem;
+  --toc-gap: 3.5rem;
+  /* Nudge the sticky bar's title and button left of the content column */
+  --sticky-shift: 2.5rem;
+}
+
+/* Breathing room between the affiliation block and the button */
+.link-buttons {
+  margin-top: 2rem;
+}
+
+/* ── Hero link buttons — filled (inverted) rather than outlined, so
+      the paper / code / data / model links read as the page's primary
+      actions instead of quiet chips ── */
+.link-buttons .btn {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.5rem 1.1rem;
+  letter-spacing: 0.01em;
+  transition: background-color .15s, transform .15s;
+}
+.link-buttons .btn:hover,
+.link-buttons .btn:focus-visible {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.link-buttons .btn i {
+  font-size: 0.9em;
+}
+
+/* The base stylesheet's phone sizing targets a bare .btn, which this
+   block outweighs — restate it at the same specificity. */
+@media (max-width: 640px) {
+  .link-buttons .btn {
+    font-size: 0.82rem;
+    padding: 0.42rem 0.9rem;
+  }
+}
+
+/* Back-to-top control: lifted out of the header's flex row and pinned to
+   the TOC card's left edge, so the two line up in the left gutter. Taking
+   it out of flow also restores the title to its original position. */
+.sticky-btn.sticky-top {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: calc(50% - var(--max-width-medium) / 2 - var(--toc-gap) - var(--toc-w));
+  width: auto;
+  gap: 0.4rem;
+  padding: 0 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+/* Below the TOC breakpoint there is no gutter to sit in, so it hides
+   alongside the TOC rather than colliding with the title. */
+@media (max-width: 1600px) {
+  .sticky-btn.sticky-top { display: none; }
+}
+
+/* Sticky-bar variant: same fill as the hero row, scoped to the link
+   cluster so the Back to Top control stays a quiet outline. */
+.sticky-links .sticky-btn {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.sticky-links .sticky-btn:hover,
+.sticky-links .sticky-btn:focus-visible {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-buttons .btn:hover { transform: none; }
+}
+
+/* Keep h3 TOC jumps clear of the 45px fixed sticky header, which would
+   otherwise cover the heading the reader just clicked. Sections are
+   left alone — their own top padding already clears the bar. */
+h3[id] {
+  scroll-margin-top: 3.5rem;
+}
+
+/* TOC moved from the fixed right-hand rail to a sticky card in the
+   left gutter. The rail spans the content wrapper, so the card scrolls
+   with the page and only pins once it reaches the sticky header. */
+.page-main {
+  position: relative;
+}
+.toc-rail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--toc-w);
+  right: calc(50% + var(--max-width-medium) / 2 + var(--toc-gap));
+  pointer-events: none;
+}
+.dynamic-toc {
+  position: sticky;
+  top: 3.75rem;        /* 45px sticky header + breathing room */
+  left: auto;
+  right: auto;
+  transform: none;
+  margin-top: 2.5rem;  /* where the card first sits, beside the content */
+  max-height: calc(100vh - 5.5rem);
+  pointer-events: auto;
+}
+
+/* ── MPC qualitative matrix: models (rows) x objects (columns) ── */
+.matrix-wrapper {
+  max-width: 800px;
+  margin: 1.5rem auto 0;
+  overflow-x: auto;
+}
+.video-matrix {
+  display: grid;
+  grid-template-columns: max-content repeat(3, 1fr);
+  gap: 0.5rem;
+  align-items: center;
+  min-width: 560px;
+}
+.video-matrix .matrix-col-head {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text);
+}
+.video-matrix .matrix-row-head {
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: right;
+  line-height: 1.3;
+  padding-right: 0.35rem;
+  color: var(--text-muted);
+}
+.video-matrix .matrix-row-head.is-ours {
+  font-weight: 700;
+  color: var(--text);
+}
+.video-matrix video {
+  width: 100%;
+  display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+/* Line the sticky bar up with the content column (900px) instead of the
+   wider 1100px shell, so the title starts flush with the body text. */
+.sticky-header-inner {
+  max-width: var(--max-width-medium);
+}
+
+/* Appendix button back at its original spot — just right of the content
+   column, against the wider shell. Pinned to .sticky-header (the fixed,
+   full-width ancestor); max() keeps it on screen on narrow viewports. */
+.sticky-links {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: max(1.5rem, calc(50% - var(--max-width) / 2 + 1.5rem + var(--sticky-shift)));
+}
+/* The button used to set the bar's height; keep the original 45px bar now
+   that it is out of flow (border-box, so this includes the 0.5rem padding). */
+.sticky-header-inner {
+  min-height: 44px;
+}
+/* Reserve room so a long title can never slide under the button. */
+.sticky-title {
+  padding-right: 7rem;
+}
+/* Only nudge the title left where there is gutter to spare; below this the
+   bar is viewport-width and the shift would put the text against the edge. */
+@media (min-width: 1000px) {
+  .sticky-title {
+    margin-left: calc(-1 * var(--sticky-shift));
+  }
+}
+
+/* Small advisory under the hero buttons. anonymous.4open.science serves files
+   without HTTP range support, which Safari requires for <video>. */
+.browser-tip {
+  /* Hidden by default; the inline host switch reveals it only on
+     anonymous.4open.science, where video playback is actually affected. */
+  display: none;
+  margin-top: 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  /* #c0392b clears WCAG AA (5.1:1) on the hero's #f7f8fa; the usual
+     #d93025 lands at 4.49:1, just under the 4.5:1 bar for small text. */
+  color: #c0392b;
+  text-align: center;
+  line-height: 1.5;
+}
+.browser-tip.show-tip {
+  display: block;
+}
+.browser-tip i {
+  margin-right: 0.3rem;
+  opacity: 0.75;
+}

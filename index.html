@@ -21,14 +21,14 @@
   <!-- Open Graph (for social sharing previews) -->
   <meta property="og:title" content="DenseReward: Dense Reward Learning via Failure Synthesis for Robotic Manipulation" />
   <meta property="og:description" content="A dense vision-language reward model trained on 27k automatically synthesized success and failure trajectories, providing per-timestep feedback for robot policy learning." />
-  <meta property="og:image" content="https://densereward.github.io/assets/images/overview.png" />
-  <meta property="og:url" content="https://densereward.github.io/" />
+  <meta property="og:image" content="https://dense-reward.github.io/assets/images/overview.png" />
+  <meta property="og:url" content="https://dense-reward.github.io/" />
   <meta property="og:type" content="website" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -41,7 +41,8 @@
     onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/style.css?v=2" />
+
 </head>
 <body>
 
@@ -80,12 +81,11 @@
     <p class="equal-contrib">* Equal contribution</p>
 
     <!-- ===== QUICK LINKS ===== -->
-    <!-- TODO: fill in arXiv / code / dataset URLs when available -->
     <div class="link-buttons">
-      <a href="https://arxiv.org/abs/2607.13033" class="btn" target="_blank"><i class="ai ai-arxiv"></i> arXiv</a>
-      <a href="https://github.com/dense-reward/dense-reward" class="btn" target="_blank"><i class="fab fa-github"></i> Code</a>
-      <a href="https://huggingface.co/datasets/densereward/DenseReward" class="btn" target="_blank"><i class="fas fa-database"></i> Dataset</a>
-      <a href="https://huggingface.co/densereward/models" class="btn" target="_blank"><i class="fas fa-cube"></i> Models</a>
+      <a href="https://arxiv.org/abs/2607.13033" class="btn" target="_blank" rel="noopener"><i class="ai ai-arxiv"></i> arXiv</a>
+      <a href="https://github.com/dense-reward/dense-reward" class="btn" target="_blank" rel="noopener"><i class="fab fa-github"></i> Code</a>
+      <a href="https://huggingface.co/datasets/densereward/DenseReward" class="btn" target="_blank" rel="noopener"><i class="fas fa-database"></i> Dataset</a>
+      <a href="https://huggingface.co/densereward/models" class="btn" target="_blank" rel="noopener"><i class="fas fa-cube"></i> Models</a>
     </div>
   </div>
 </header>
@@ -93,17 +93,25 @@
 <!-- Compact sticky header bar (appears on scroll) -->
 <div class="sticky-header" id="sticky-header">
   <div class="sticky-header-inner">
+    <a href="#" class="sticky-btn sticky-top" title="Back to top"
+       onclick="event.preventDefault();window.scrollTo({top:0,behavior:'smooth'});"><i class="fas fa-arrow-up"></i> Back to Top</a>
     <div class="sticky-title">
       <strong>DenseReward:</strong> Dense Reward Learning via Failure Synthesis for Robotic Manipulation
     </div>
     <div class="sticky-links">
-      <a href="https://arxiv.org/abs/2607.13033" class="sticky-btn" target="_blank" title="arXiv"><i class="ai ai-arxiv"></i></a>
-      <a href="https://github.com/dense-reward/dense-reward" class="sticky-btn" target="_blank" title="Code"><i class="fab fa-github"></i></a>
-      <a href="#" class="sticky-btn" target="_blank" title="Dataset"><i class="fas fa-database"></i></a>
-      <a href="https://huggingface.co/densereward/models" class="sticky-btn" target="_blank" title="Models"><i class="fas fa-cube"></i></a>
+      <a href="https://arxiv.org/abs/2607.13033" class="sticky-btn" target="_blank" rel="noopener" title="arXiv"><i class="ai ai-arxiv"></i></a>
+      <a href="https://github.com/dense-reward/dense-reward" class="sticky-btn" target="_blank" rel="noopener" title="Code"><i class="fab fa-github"></i></a>
+      <a href="https://huggingface.co/datasets/densereward/DenseReward" class="sticky-btn" target="_blank" rel="noopener" title="Dataset"><i class="fas fa-database"></i></a>
+      <a href="https://huggingface.co/densereward/models" class="sticky-btn" target="_blank" rel="noopener" title="Models"><i class="fas fa-cube"></i></a>
     </div>
   </div>
 </div>
+
+<!-- Main content wrapper: positioning context for the sticky TOC rail -->
+<div class="page-main">
+
+<!-- Dynamic TOC (left rail, built from headings) -->
+<div class="toc-rail"><nav id="dynamic-toc" class="dynamic-toc"></nav></div>
 
 <!-- ╔══════════════════════════════════════════════════════════════╗
      ║  VIDEO SUMMARY                                               ║
@@ -132,9 +140,9 @@
     </figure>
     <p>
       We present a dense robotic reward model for vision-language-guided manipulation.
-      (a) We curate a dataset with <strong>27k episodes</strong> by automatically producing diverse trajectories across different failure modes, providing scalable dense reward annotations.
-      (b) Given a task instruction and observations consisting of the current frame and historical frames, <strong>DenseReward</strong> predicts a <strong>per-timestep dense reward score</strong> that reflects task progress. Unlike binary success/failure labels, this dense reward provides fine-grained feedback for intermediate states.
-      (c) The predicted rewards can be used in <strong>downstream reinforcement learning</strong> for policy improvement.
+      (a) We construct a 27k-episode dataset with <strong>automatically synthesized success and failure trajectories in simulation</strong>, providing diverse dense reward supervision.
+      (b) Given a task instruction and observations consisting of the current frame and historical frames, DenseReward <strong>predicts both the current execution state and a per-timestep dense reward score that reflects task progress</strong>. Unlike binary success/failure labels, this dense reward provides fine-grained feedback for intermediate states.
+      (c) The predicted rewards can be used in <strong>downstream reinforcement learning for policy improvement</strong>.
     </p>
   </div>
 </section>
@@ -146,10 +154,10 @@
   <div class="container container-medium">
     <h2>Abstract</h2>
     <p class="abstract-text">
-      Reinforcement learning holds great promise for improving robot policies beyond the limits of imitation learning. However, its practical adoption remains bottlenecked by the lack of reliable vision-language reward models that provide dense and informative feedback. Two key challenges remain: acquiring diverse failure data at scale and obtaining fine-grained reward signals beyond sparse trajectory-level success labels. Collecting failure trajectories typically requires laborious human effort, while pseudo-failures constructed by relabeling successful demonstrations fail to capture the diverse physical failure modes that arise during robot execution. Meanwhile, existing reward models often predict sparse binary or trajectory-level rewards, which provide limited guidance for efficient policy optimization.
+      Reinforcement learning holds great promise for improving robot policies beyond the limits of imitation learning. However, its practical adoption remains bottlenecked by the lack of reliable vision-language reward models that provide dense and informative feedback. Two key challenges remain: acquiring diverse failure data at scale and obtaining fine-grained reward signals beyond sparse trajectory-level success labels. Existing approaches reuse successful trajectories to construct negative or suboptimal examples through trajectory truncation, instruction relabeling, or trajectory comparisons, without generating new trajectories where physical interaction failures such as collisions, missed grasps, object drops, and recovery actually occur. Meanwhile, many existing reward models predict sparse binary or trajectory-level rewards, which provide limited guidance for efficient policy optimization.
     </p>
     <p class="abstract-text">
-      We introduce <strong>DenseReward</strong>, a dense robotic reward model that addresses both challenges. To train DenseReward, we develop an automated failure data generation pipeline that synthesizes physically realistic failure trajectories in simulation without human labeling, covering diverse failure modes such as collisions, missed grasps, object drops, and recovery behaviors. DenseReward predicts dense frame-level reward scores from visual observations and language instructions, enabling fine-grained estimation of task progress throughout an episode.
+      We introduce <strong>DenseReward</strong>, a dense robotic reward model that addresses both challenges. To train DenseReward, we develop an automated failure data generation pipeline that synthesizes physically realistic failure trajectories in simulation without manual annotation, covering diverse failure modes such as collisions, missed grasps, object drops, and recovery behaviors. DenseReward predicts dense frame-level reward scores from visual observations and language instructions, enabling fine-grained estimation of task progress throughout an episode.
     </p>
     <p class="abstract-text">
       Experiments show that DenseReward outperforms general-purpose VLMs and existing robotic reward models in dense reward prediction across both simulated and real-world manipulation. We further demonstrate that DenseReward provides effective reward guidance for downstream model predictive control and reinforcement learning. We release the dataset, trained reward models, and evaluation suite to support the development of failure-aware dense reward modeling for robot learning.
@@ -184,7 +192,8 @@
 
     <h3 id="reward-prediction">Dense Reward Prediction</h3>
     <p>
-      DenseReward achieves the best overall performance with an average prediction error (MAE) of <strong>0.081</strong>, outperforming general-purpose VLMs and existing robotic reward models across all evaluated data sources.
+      We report the mean absolute error (MAE) with respect to the dense reward annotations in our evaluation set.
+      DenseReward achieves the lowest error across all evaluated data sources.
     </p>
     <div class="table-wrapper">
       <table class="results-table">
@@ -214,13 +223,44 @@
     <figure class="figure-full">
       <img src="assets/images/results.png" alt="Qualitative comparison of dense reward prediction against Molmo2 and RoboReward" />
       <figcaption>
-        DenseReward better follows task progress than strong VLM and robotic reward model baselines across success and failure trajectories.
+        DenseReward more closely follows task progress than strong VLM and robotic reward model baselines across successful and failed executions.
       </figcaption>
     </figure>
 
+    <div class="figure-grid cols-2">
+      <figure>
+        <video class="media-video" data-src="assets/videos/comparison_milk_success.mp4" autoplay loop muted playsinline preload="none">
+          <source data-src="assets/videos/comparison_milk_success.mp4" type="video/mp4" />
+        </video>
+        <figcaption>Milk: success</figcaption>
+      </figure>
+      <figure>
+        <video class="media-video" data-src="assets/videos/comparison_soap_collision.mp4" autoplay loop muted playsinline preload="none">
+          <source data-src="assets/videos/comparison_soap_collision.mp4" type="video/mp4" />
+        </video>
+        <figcaption>Soap: collision</figcaption>
+      </figure>
+      <figure>
+        <video class="media-video" data-src="assets/videos/comparison_lime_miss.mp4" autoplay loop muted playsinline preload="none">
+          <source data-src="assets/videos/comparison_lime_miss.mp4" type="video/mp4" />
+        </video>
+        <figcaption>Lime: miss</figcaption>
+      </figure>
+      <figure>
+        <video class="media-video" data-src="assets/videos/comparison_hotdog_fall.mp4" autoplay loop muted playsinline preload="none">
+          <source data-src="assets/videos/comparison_hotdog_fall.mp4" type="video/mp4" />
+        </video>
+        <figcaption>Hot dog: fall</figcaption>
+      </figure>
+    </div>
+
     <h3 id="mpc">Model Predictive Control</h3>
     <p>
-      We evaluate reward models for guiding downstream control in a sampling-based MPC setting: at each decision step, 28 candidate actions are sampled and scored by the reward model, and the highest-scoring action is executed. We report the minimum end-effector-to-object distance (lower is better). DenseReward achieves the best average performance, showing that its dense rewards provide more effective guidance for closed-loop control.
+      We evaluate whether the learned reward signal can provide useful local guidance for action selection in a simple short-horizon control setting.
+      At each decision step, we sample 28 candidate actions (27 directions and gripper open/close), and use the reward model to score candidate transitions.
+      The simulator state is then restored, and the action with the highest predicted score is executed by the robot.
+      We evaluate this procedure on three object manipulation settings involving a can, cup, and lemon.
+      We evaluate the quality of local guidance using the minimum distance between the gripper and the target object, where a lower value indicates more effective guidance.
     </p>
     <div class="table-wrapper">
       <table class="results-table">
@@ -234,7 +274,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr><td>RoboReward-4B</td><td>0.199</td><td>0.307</td><td>0.295</td><td>0.267</td></tr>
+          <tr><td>RoboReward-4B</td><td><strong>0.199</strong></td><td>0.307</td><td>0.295</td><td>0.267</td></tr>
           <tr><td>RoboReward-8B</td><td>0.314</td><td>0.270</td><td>0.317</td><td>0.300</td></tr>
           <tr><td>VLAC-2B</td><td>0.316</td><td>0.346</td><td>0.380</td><td>0.347</td></tr>
           <tr><td>VLAC-8B</td><td>0.351</td><td>0.360</td><td>0.363</td><td>0.358</td></tr>
@@ -244,9 +284,52 @@
       <p class="table-caption">MPC performance on three object manipulation tasks (minimum distance, lower is better).</p>
     </div>
 
+    <div class="matrix-wrapper">
+      <div class="video-matrix">
+        <div></div>
+        <div class="matrix-col-head">Can</div>
+        <div class="matrix-col-head">Cup</div>
+        <div class="matrix-col-head">Lemon</div>
+
+        <div class="matrix-row-head">VLAC-8B</div>
+        <video data-src="assets/videos/vlac_8b_can.mp4" autoplay loop muted playsinline preload="none">
+          <source data-src="assets/videos/vlac_8b_can.mp4" type="video/mp4" />
+        </video>
+        <video data-src="assets/videos/vlac_8b_cup.mp4" autoplay loop muted playsinline preload="none">
+          <source data-src="assets/videos/vlac_8b_cup.mp4" type="video/mp4" />
+        </video>
+        <video data-src="assets/videos/vlac_8b_lemon.mp4" autoplay loop muted playsinline preload="none">
+          <source data-src="assets/videos/vlac_8b_lemon.mp4" type="video/mp4" />
+        </video>
+
+        <div class="matrix-row-head">RoboReward-4B</div>
+        <video data-src="assets/videos/roboreward_4b_can.mp4" autoplay loop muted playsinline preload="none">
+          <source data-src="assets/videos/roboreward_4b_can.mp4" type="video/mp4" />
+        </video>
+        <video data-src="assets/videos/roboreward_4b_cup.mp4" autoplay loop muted playsinline preload="none">
+          <source data-src="assets/videos/roboreward_4b_cup.mp4" type="video/mp4" />
+        </video>
+        <video data-src="assets/videos/roboreward_4b_lemon.mp4" autoplay loop muted playsinline preload="none">
+          <source data-src="assets/videos/roboreward_4b_lemon.mp4" type="video/mp4" />
+        </video>
+
+        <div class="matrix-row-head is-ours">DenseReward<br/>(Ours)</div>
+        <video data-src="assets/videos/densereward_4b_can.mp4" autoplay loop muted playsinline preload="none">
+          <source data-src="assets/videos/densereward_4b_can.mp4" type="video/mp4" />
+        </video>
+        <video data-src="assets/videos/densereward_4b_cup.mp4" autoplay loop muted playsinline preload="none">
+          <source data-src="assets/videos/densereward_4b_cup.mp4" type="video/mp4" />
+        </video>
+        <video data-src="assets/videos/densereward_4b_lemon.mp4" autoplay loop muted playsinline preload="none">
+          <source data-src="assets/videos/densereward_4b_lemon.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <p class="table-caption">Qualitative MPC rollouts guided by each reward model. DenseReward drives the end-effector toward the target object more reliably than VLAC-8B and RoboReward-4B.</p>
+    </div>
+
     <h3 id="rl-libero">Reinforcement Learning on LIBERO</h3>
     <p>
-      We apply DenseReward for online PPO fine-tuning of a $\pi_0$ policy on the LIBERO benchmark, combining the sparse simulator success signal with dense chunk-level rewards. Compared with the sparse-reward PPO baseline, DenseReward achieves higher success on LIBERO-Spatial and LIBERO-10, while matching the strong final performance on LIBERO-Object.
+      We apply DenseReward as a shaping signal for online PPO fine-tuning of a $\pi_0$ policy on LIBERO, combining the sparse simulator success reward with dense chunk-level feedback. PPO with DenseReward achieves competitive or improved performance compared with the sparse-reward PPO baseline.
     </p>
     <figure class="figure-full">
       <img src="assets/images/libero.png" alt="PPO fine-tuning success rates with and without DenseReward on four LIBERO suites" />
@@ -254,11 +337,38 @@
 
     <h3 id="real-world">Real-World Policy Learning</h3>
     <p>
-      We evaluate DenseReward for real-world online RL on a DROID platform, using DSRL to steer a frozen $\pi_0$ policy with only 10&ndash;20 real-world rollout trajectories. Adding DenseReward improves the success rate from <strong>40% to 80%</strong> on <em>stack the cups</em>, and from <strong>30% to 70%</strong> on <em>put ball in basket</em>, showing that dense feedback enables efficient policy improvement under limited rollout budgets.
+      We evaluate DenseReward for real-world online RL on a DROID platform, using DSRL to steer a frozen $\pi_0$ policy with only 10&ndash;20 real-world rollout trajectories. Adding DenseReward improves the success rate from <strong>60% to 80%</strong> on <em>stack the cups</em>, and from <strong>40% to 70%</strong> on <em>put ball in basket</em>, demonstrating effective dense feedback for real-world policy learning.
     </p>
     <figure class="figure-full">
       <img src="assets/images/realworld.png" alt="Real-world DSRL experiments on stack the cups and put ball in basket" />
     </figure>
+
+    <div class="figure-grid cols-2">
+      <figure>
+        <video
+          class="media-video"
+          data-src="assets/videos/realworld_collision.mp4"
+          autoplay loop muted playsinline controls preload="none"
+        >
+          <source data-src="assets/videos/realworld_collision.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          <strong>Collision.</strong> The predicted reward rises as the robot grasps the ball and moves toward the basket, then drops once a collision disrupts the placement.
+        </figcaption>
+      </figure>
+      <figure>
+        <video
+          class="media-video"
+          data-src="assets/videos/realworld_miss.mp4"
+          autoplay loop muted playsinline controls preload="none"
+        >
+          <source data-src="assets/videos/realworld_miss.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          <strong>Missed grasp and recovery.</strong> The reward degrades when the robot fails to grasp the ball, then climbs back to a high final score after it recovers and regrasps.
+        </figcaption>
+      </figure>
+    </div>
   </div>
 </section>
 
@@ -289,8 +399,7 @@
   <div class="container"></div>
 </footer>
 
-<!-- Dynamic TOC (right sidebar, built from headings) -->
-<nav id="dynamic-toc" class="dynamic-toc"></nav>
+</div><!-- /.page-main -->
 
 <!-- JavaScript -->
 <script src="assets/js/script.js"></script>
