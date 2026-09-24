@@ -928,12 +928,9 @@ body {
   background: rgba(99, 102, 241, 0.08);
 }
 
-/* Hide TOC when viewport is too narrow for it to not overlap content
-   (this page's video section uses the full 1100px container, so the
-    TOC needs more room than the template default of 1400px) */
-@media (max-width: 1600px) {
-  .dynamic-toc { display: none; }
-}
+/* TOC visibility is width-dependent; both its breakpoints live with the
+   rail overrides further down (search for --toc-gap) so the thresholds
+   and the geometry they are derived from stay in one place. */
 
 /* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 640px) {
@@ -1020,9 +1017,28 @@ body {
                BlinkMacSystemFont, "Segoe UI", sans-serif;
   /* Fixed TOC width so the back-to-top button can align to its left edge */
   --toc-w: 16rem;
-  --toc-gap: 3.5rem;
+  --toc-gap: 1.5rem;
   /* Nudge the sticky bar's title and button left of the content column */
   --sticky-shift: 2.5rem;
+}
+
+/* ── TOC / back-to-top visibility thresholds ──────────────────
+   The card sits in the left gutter, so it needs
+     900px (content) + 2 x (--toc-gap + --toc-w + edge margin)
+   to clear the text. Rather than hiding the moment the roomy default stops
+   fitting, fall back once: close the gap so the card sits flush against the
+   content column, and trim the rail to the width its entries actually need.
+   Only when that compact form would run off-screen does it hide.
+     16rem + 1.5rem gap needs ~1510px  |  14rem flush needs ~1400px  */
+@media (max-width: 1520px) {
+  :root {
+    --toc-gap: 0rem;
+    --toc-w: 14rem;
+  }
+}
+@media (max-width: 1400px) {
+  .dynamic-toc,
+  .sticky-btn.sticky-top { display: none; }
 }
 
 /* Breathing room between the affiliation block and the button */
@@ -1078,11 +1094,8 @@ body {
   font-weight: 500;
   white-space: nowrap;
 }
-/* Below the TOC breakpoint there is no gutter to sit in, so it hides
-   alongside the TOC rather than colliding with the title. */
-@media (max-width: 1600px) {
-  .sticky-btn.sticky-top { display: none; }
-}
+/* The button tracks --toc-gap too, so it stays aligned with the card's
+   left edge as the gap closes, and hides alongside it. */
 
 /* Sticky-bar variant: same fill as the hero row, scoped to the link
    cluster so the Back to Top control stays a quiet outline. */
